@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coupon Redemption Invoice – MTG Stores</title>
+<style>
+  :root {
+    --navy: #1a2744;
+    --gold: #c8961e;
+    --gold-light: #f0c84a;
+    --slate: #3b4a6b;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --border: #d0d8e8;
+    --text: #1a2744;
+    --muted: #6b7a99;
+    --green: #1a7a4a;
+    --red: #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .app-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--slate) 100%);
+    color: white; padding: 18px 24px 14px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.25);
+  }
+  .app-header .logo {
+    width: 46px; height: 46px; background: var(--gold); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: var(--navy); flex-shrink: 0; letter-spacing:-.5px;
+  }
+  .app-header h1 { font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
+  .app-header p  { font-size: .73rem; color: #b0bcd8; margin-top: 2px; }
+
+  .form-wrap { max-width: 720px; margin: 22px auto; padding: 0 16px 48px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(26,39,68,.07);
+  }
+  .card-title {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--muted); margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--gold); display: inline-block;
+  }
+
+  label { display: block; font-size: .82rem; font-weight: 600; color: var(--slate); margin-bottom: 5px; margin-top: 14px; }
+  label:first-of-type { margin-top: 0; }
+
+  select, input[type="number"], input[type="text"], input[type="date"], input[type="email"] {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: .9rem; color: var(--text); background: #fafbfd; transition: border-color .2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--gold); background: #fff; box-shadow: 0 0 0 3px rgba(200,150,30,.12); }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:500px){ .row2 { grid-template-columns: 1fr; } }
+
+  /* Store info preview */
+  .store-preview {
+    margin-top: 12px; background: #eef2fa; border-radius: 10px;
+    padding: 12px 16px; display: none; border-left: 4px solid var(--gold);
+  }
+  .store-preview.show { display: block; }
+  .store-preview .entity { font-size: .78rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .store-preview .addr  { font-size: .76rem; color: var(--slate); line-height: 1.6; }
+  .store-preview .email { font-size: .73rem; color: var(--muted); margin-top: 3px; }
+
+  /* Dept info */
+  .dept-info {
+    margin-top: 12px; background: #eef2fa; border-radius: 10px;
+    padding: 12px 16px; display: none; gap: 10px; flex-wrap: wrap; border-left: 4px solid var(--slate);
+  }
+  .dept-info.show { display: flex; }
+  .dept-badge {
+    background: var(--navy); color: white; border-radius: 8px;
+    padding: 6px 14px; font-size: .8rem; font-weight: 700;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
+  .dept-badge span { color: var(--gold-light); }
+  .dept-address { font-size: .76rem; color: var(--slate); line-height: 1.65; }
+
+  /* Coupon rows */
+  .coupon-rows { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .coupon-row {
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    gap: 10px; align-items: end;
+    background: #f7f9fd; border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .coupon-row .field-label { font-size: .75rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; display: block; }
+  .coupon-row .row-total { font-size: .88rem; font-weight: 800; color: var(--green); min-width: 68px; text-align: right; padding-bottom: 10px; }
+  .remove-btn {
+    background: none; border: none; cursor: pointer; color: var(--red);
+    font-size: 1.15rem; padding: 6px; border-radius: 5px; transition: background .15s; line-height: 1; margin-bottom: 4px;
+  }
+  .remove-btn:hover { background: #fde8e6; }
+  .add-row-btn {
+    margin-top: 8px; background: none; border: 2px dashed var(--border);
+    border-radius: 8px; padding: 10px; width: 100%;
+    color: var(--muted); font-size: .85rem; cursor: pointer; transition: all .2s;
+  }
+  .add-row-btn:hover { border-color: var(--gold); color: var(--gold); background: #fffbf0; }
+
+  /* Totals */
+  .totals-box { background: #f0f4fb; border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
+  .totals-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; font-size: .87rem; color: var(--slate);
+    border-bottom: 1px solid #dde4f0;
+  }
+  .totals-row:last-child { border-bottom: none; }
+  .totals-row.grand { font-size: 1.08rem; font-weight: 800; color: var(--navy); margin-top: 4px; padding-top: 8px; }
+  .totals-row.grand .gval { color: var(--green); font-size: 1.15rem; }
+
+  /* Actions */
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 130px; padding: 13px 14px; border: none; border-radius: 10px;
+    font-size: .87rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: opacity .18s, transform .1s; letter-spacing: .01em;
+  }
+  .btn:hover  { opacity: .86; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-preview  { background: var(--navy); color: white; }
+  .btn-print    { background: var(--slate); color: white; }
+  .btn-whatsapp { background: #25d366; color: white; }
+  .btn-email    { background: var(--gold);  color: var(--navy); }
+
+  /* Preview modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.58); z-index: 100;
+    padding: 16px; overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 24px; }
+  .modal-box {
+    background: white; border-radius: 14px; max-width: 700px; width: 100%;
+    overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,.38);
+  }
+  .modal-toolbar {
+    background: var(--navy); padding: 12px 18px;
+    display: flex; align-items: center; justify-content: space-between; color: white;
+  }
+  .modal-toolbar span { font-size: .9rem; font-weight: 700; }
+  .modal-close {
+    background: rgba(255,255,255,.15); border: none; border-radius: 6px;
+    color: white; padding: 5px 12px; cursor: pointer; font-size: .8rem; font-weight: 600;
+  }
+  .modal-close:hover { background: rgba(255,255,255,.28); }
+
+  /* ── PRINTABLE INVOICE ── */
+  #invoice-doc { padding: 28px 32px; font-family: Arial, sans-serif; font-size: 10.5pt; color: #000; }
+  .inv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .inv-brand { font-size: 8pt; color: #555; text-align: right; line-height: 1.5; }
+  .inv-header { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 14px; }
+  .inv-header h2 { font-size: 13.5pt; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+  .inv-header p  { font-size: 8pt; color: #444; margin-top: 3px; line-height: 1.5; }
+  .inv-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .inv-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .inv-box { border: 1px solid #999; padding: 7px 10px; border-radius: 3px; }
+  .inv-box .lbl { font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 2px; letter-spacing: .05em; }
+  .inv-box .val { font-size: 9.5pt; font-weight: 700; line-height: 1.35; }
+  .inv-mail-section { margin-bottom: 12px; background: #f6f6f6; border: 1px solid #ccc; padding: 9px 12px; border-radius: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .inv-mail-section .lbl { font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 4px; letter-spacing: .05em; }
+  .inv-mail-section .addr { font-size: 9pt; line-height: 1.65; }
+  .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 9.5pt; }
+  .inv-table th { background: #1a2744; color: white; padding: 6px 10px; text-align: left; font-size: 8pt; letter-spacing: .04em; }
+  .inv-table th.right, .inv-table td.right { text-align: right; }
+  .inv-table td { padding: 5px 10px; border-bottom: 1px solid #ddd; }
+  .inv-table tbody tr:last-child td { border-bottom: 2px solid #999; }
+  .inv-table tfoot td { padding: 5px 10px; font-weight: 700; background: #f0f0f0; }
+  .inv-totals-wrap { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+  .inv-totals { width: 280px; border: 1.5px solid #999; border-radius: 3px; overflow: hidden; }
+  .inv-tot-row { display: flex; justify-content: space-between; padding: 5px 12px; font-size: 9pt; border-bottom: 1px solid #ddd; }
+  .inv-tot-row:last-child { border-bottom: none; background: #1a2744; color: white; font-weight: 900; font-size: 10pt; }
+  .inv-dept-strip {
+    display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+    border: 1px solid #999; border-radius: 3px; padding: 7px 8px;
+    font-size: 7.5pt; margin-bottom: 12px;
+  }
+  .inv-dept-chip { background: #dde3f0; color: #1a2744; padding: 3px 10px; border-radius: 3px; font-weight: 700; text-align: center; }
+  .inv-dept-chip.active { background: #c8961e; color: #fff; }
+  .inv-sig { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px; }
+  .inv-sig-line { border-bottom: 1.5px solid #555; padding-bottom: 3px; }
+  .inv-sig-lbl { font-size: 6.5pt; color: #666; margin-top: 3px; text-transform: uppercase; letter-spacing: .05em; }
+  .inv-footer { font-size: 6.5pt; color: #888; text-align: center; border-top: 1px solid #ddd; padding-top: 6px; }
+
+  /* Email modal */
+  .email-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.55); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .email-modal.open { display: flex; }
+  .email-box { background: white; border-radius: 14px; padding: 28px; max-width: 430px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .email-box h3 { font-size: 1.05rem; margin-bottom: 14px; color: var(--navy); }
+  .email-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-send-email { flex:1; padding:11px; background:var(--gold); color:var(--navy); border:none; border-radius:9px; font-weight:700; cursor:pointer; font-size:.9rem; }
+  .btn-cancel     { flex:1; padding:11px; background:#eee; color:var(--slate); border:none; border-radius:9px; font-weight:700; cursor:pointer; font-size:.9rem; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #invoice-doc, #invoice-doc * { visibility: visible; }
+    #invoice-doc { position: fixed; inset: 0; padding: 16px 22px; font-size: 9pt; }
+    .modal-overlay, .modal-toolbar { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="logo">MTG</div>
+  <div>
+    <h1>Coupon Redemption Invoice</h1>
+    <p>Altria · Reynolds · Swisher · Helix · NJOY — Inmar Brand Solutions</p>
+  </div>
+</div>
+
+<div class="form-wrap">
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="card-title">Step 1 — Store &amp; Invoice Info</div>
+    <label for="sel-store">Store Location</label>
+    <select id="sel-store" onchange="onStoreChange()">
+      <option value="">— Choose a store —</option>
+      <optgroup label="NAAV INC">
+        <option value="naav_wellford">Kum "N" Go – Wellford</option>
+      </optgroup>
+      <optgroup label="Mehta Management LLC">
+        <option value="mehta_pats2">Pats #2 – Inman</option>
+        <option value="mehta_kc6">KC Mart #6 – Greer</option>
+        <option value="mehta_kc9">KC Mart #9 – Greer</option>
+      </optgroup>
+      <optgroup label="VDANK LLC">
+        <option value="vdank_kc4">KC Mart #4 – Central</option>
+      </optgroup>
+      <optgroup label="Mehta Investment and Consultancy LLC">
+        <option value="mic_hickory">Hickory Point – Blacksburg</option>
+      </optgroup>
+      <optgroup label="3VD LLC">
+        <option value="3vd_saluda">Saluda Quick Stop – Williamston</option>
+      </optgroup>
+      <optgroup label="Mehta Properties LLC">
+        <option value="mp_qs641">Quick Stop – Greenville</option>
+      </optgroup>
+      <optgroup label="TMG Investment 1 LLC">
+        <option value="tmg_mtg1">Marts To Go 1 – Dillon</option>
+        <option value="tmg_mtg2">Marts To Go 2 – Moncks Corner</option>
+        <option value="tmg_mtg3">Marts To Go 3 – Greenville</option>
+        <option value="tmg_mtg4">Marts To Go 4 – Charlotte</option>
+        <option value="tmg_mtg5">Marts To Go 5 – Rock Hill</option>
+      </optgroup>
+    </select>
+
+    <div class="store-preview" id="store-preview">
+      <div class="entity" id="sp-entity">—</div>
+      <div class="addr"   id="sp-addr">—</div>
+      <div class="email"  id="sp-email">—</div>
+    </div>
+
+    <div class="row2" style="margin-top:14px;">
+      <div>
+        <label for="inv-date">Invoice Date</label>
+        <input type="date" id="inv-date">
+      </div>
+      <div>
+        <label for="inv-num">Invoice #</label>
+        <input type="text" id="inv-num" placeholder="e.g. MTG5-2026-001">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <div class="card-title">Step 2 — Tobacco Company / Department</div>
+    <label for="sel-dept">Company (Operating Department)</label>
+    <select id="sel-dept" onchange="onDeptChange()">
+      <option value="">— Choose a company —</option>
+      <optgroup label="Altria Operating Companies">
+        <option value="PM USA">PM USA – Dept #28200 (Marlboro / Philip Morris)</option>
+        <option value="USSTC">USSTC – Dept #73100 (Skoal / Copenhagen / Grizzly)</option>
+        <option value="Helix">Helix – Dept #55022 (on! Nicotine Pouches)</option>
+        <option value="JMC">JMC – Dept #70137 (Black &amp; Mild / John Middleton)</option>
+        <option value="NJOY">NJOY – Dept #18400 (E-Vapor)</option>
+      </optgroup>
+      <optgroup label="Other Manufacturers">
+        <option value="Reynolds">Reynolds – Dept #12300 (Camel / Newport / NAS)</option>
+        <option value="Swisher">Swisher International – Dept #33300 (Swisher Sweets)</option>
+      </optgroup>
+    </select>
+    <div class="dept-info" id="dept-info">
+      <div><div class="dept-badge">Dept # <span id="dept-num">—</span></div></div>
+      <div class="dept-address" id="dept-address-block">—</div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <div class="card-title">Step 3 — Coupon Denominations</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">One row per face value. Add more rows if you have multiple denominations.</p>
+    <div class="coupon-rows" id="coupon-rows"></div>
+    <button class="add-row-btn" onclick="addRow()">＋ Add Another Face Value Row</button>
+    <div class="totals-box">
+      <div class="totals-row"><span>Total Coupons</span><strong id="tot-coupons">0</strong></div>
+      <div class="totals-row"><span>Total Face Value</span><strong id="tot-face">$0.00</strong></div>
+      <div class="totals-row"><span>Handling Fee ($0.08 × coupons)</span><strong id="tot-handling">$0.00</strong></div>
+      <div class="totals-row">
+        <span>Postage Amount <em style="color:var(--muted);font-weight:400;font-size:.8em;">(enter manually)</em></span>
+        <input type="number" id="postage" min="0" step="0.01" placeholder="0.00"
+               style="width:96px;padding:5px 8px;font-size:.85rem;text-align:right;" oninput="calc()">
+      </div>
+      <div class="totals-row grand">
+        <span>💰 Total Claimed Amount</span>
+        <span class="gval" id="tot-grand">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="card">
+    <div class="card-title">Step 4 — Generate &amp; Send</div>
+    <div class="actions">
+      <button class="btn btn-preview"  onclick="previewInvoice()">👁 Preview</button>
+      <button class="btn btn-print"    onclick="printInvoice()">🖨 Print</button>
+      <button class="btn btn-whatsapp" onclick="sendWhatsapp()">💬 WhatsApp</button>
+      <button class="btn btn-email"    onclick="openEmailModal()">✉️ Email</button>
+    </div>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal-box">
+    <div class="modal-toolbar">
+      <span>📄 Invoice Preview</span>
+      <div style="display:flex;gap:8px;">
+        <button class="modal-close" onclick="printInvoice()">🖨 Print</button>
+        <button class="modal-close" onclick="closePreview()">✕ Close</button>
+      </div>
+    </div>
+    <div id="invoice-doc"></div>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="email-modal" id="email-modal">
+  <div class="email-box">
+    <h3>✉️ Email Invoice</h3>
+    <label for="email-to">To</label>
+    <input type="email" id="email-to" placeholder="email@example.com" value="mtgstoreops@gmail.com">
+    <label for="email-cc">CC (optional)</label>
+    <input type="email" id="email-cc" placeholder="cc@example.com">
+    <label for="email-note">Note (optional)</label>
+    <input type="text" id="email-note" placeholder="Coupon invoice attached…">
+    <div class="email-actions">
+      <button class="btn-cancel" onclick="closeEmailModal()">Cancel</button>
+      <button class="btn-send-email" onclick="doEmail()">Open in Mail App</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STORE DATA ──
+const STORES = {
+  naav_wellford: {
+    entity:   "NAAV INC",
+    name:     "Kum \"N\" Go (Wellford)",
+    street:   "859 Neighborhood Rd",
+    city:     "Wellford, SC 29385",
+    email:    "naav1inc@gmail.com"
+  },
+  mehta_pats2: {
+    entity:   "Mehta Management LLC",
+    name:     "Pats #2 (Inman)",
+    street:   "12110 Asheville Hwy",
+    city:     "Inman, SC 29349",
+    email:    "patsstore02@gmail.com"
+  },
+  mehta_kc6: {
+    entity:   "Mehta Management LLC",
+    name:     "KC Mart #6 (Greer)",
+    street:   "2851 N Hwy 101",
+    city:     "Greer, SC 29651",
+    email:    "kcmart06@gmail.com"
+  },
+  mehta_kc9: {
+    entity:   "Mehta Management LLC",
+    name:     "KC Mart #9 (Greer)",
+    street:   "701 S Buncombe Rd",
+    city:     "Greer, SC 29650",
+    email:    "kcmart09@gmail.com"
+  },
+  vdank_kc4: {
+    entity:   "VDANK LLC",
+    name:     "KC Mart #4 (Central)",
+    street:   "302 Suite-A E. Main Street",
+    city:     "Central, SC 29630",
+    email:    "vdankllc@gmail.com"
+  },
+  mic_hickory: {
+    entity:   "Mehta Investment and Consultancy LLC",
+    name:     "Hickory Point (Blacksburg)",
+    street:   "2806 E Cherokee Street",
+    city:     "Blacksburg, SC 29702",
+    email:    "point.hickory@gmail.com"
+  },
+  "3vd_saluda": {
+    entity:   "3VD LLC",
+    name:     "Saluda Quick Stop (Williamston)",
+    street:   "1525 Anderson Dr",
+    city:     "Williamston, SC 29697",
+    email:    "3vdllc@gmail.com"
+  },
+  mp_qs641: {
+    entity:   "Mehta Properties LLC",
+    name:     "Quick Stop (Greenville)",
+    street:   "641 N Main Street",
+    city:     "Greenville, SC 29601",
+    email:    "quickstop641@gmail.com"
+  },
+  tmg_mtg1: {
+    entity:   "TMG Investment 1 LLC",
+    name:     "Marts To Go 1 (Dillon)",
+    street:   "826 Radford Blvd",
+    city:     "Dillon, SC 29536",
+    email:    "tmginvest1@gmail.com"
+  },
+  tmg_mtg2: {
+    entity:   "TMG Investment 1 LLC",
+    name:     "Marts To Go 2 (Moncks Corner)",
+    street:   "101 S Live Oak Dr",
+    city:     "Moncks Corner, SC 29461",
+    email:    "tmginvest1@gmail.com"
+  },
+  tmg_mtg3: {
+    entity:   "TMG Investment 1 LLC",
+    name:     "Marts To Go 3 (Greenville)",
+    street:   "1703 Easley Bridge Rd",
+    city:     "Greenville, SC 29611",
+    email:    "martstogo3@gmail.com"
+  },
+  tmg_mtg4: {
+    entity:   "TMG Investment 1 LLC",
+    name:     "Marts To Go 4 (Charlotte)",
+    street:   "5343 Monroe Rd",
+    city:     "Charlotte, NC 28205",
+    email:    "martstogo4@gmail.com"
+  },
+  tmg_mtg5: {
+    entity:   "TMG Investment 1 LLC",
+    name:     "Marts To Go 5 (Rock Hill)",
+    street:   "1312 Springsteen Rd",
+    city:     "Rock Hill, SC 29730",
+    email:    "martstogo05@gmail.com"
+  }
+};
+
+// ── COMPANY DATA ──
+const COMPANIES = {
+  "PM USA": {
+    dept: "28200", brand: "PM USA (Philip Morris USA)",
+    products: "Marlboro & Philip Morris Brands",
+    mailTo: "Philip Morris USA",
+    clearingHouse: "Inmar Dept. #28200, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
+  },
+  "USSTC": {
+    dept: "73100", brand: "USSTC (U.S. Smokeless Tobacco Co.)",
+    products: "Skoal / Copenhagen / Grizzly",
+    mailTo: "USSTC",
+    clearingHouse: "Inmar Dept. #73100, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
+  },
+  "Helix": {
+    dept: "55022", brand: "Helix Innovations LLC",
+    products: "on! Nicotine Pouches",
+    mailTo: "Helix Innovations LLC",
+    clearingHouse: "Inmar Dept. #55022, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
+  },
+  "JMC": {
+    dept: "70137", brand: "JMC (John Middleton Co.)",
+    products: "Black & Mild / Pipe Tobacco",
+    mailTo: "John Middleton Co.",
+    clearingHouse: "Inmar Dept. #70137, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
+  },
+  "NJOY": {
+    dept: "18400", brand: "NJOY",
+    products: "E-Vapor / Electronic Cigarettes",
+    mailTo: "NJOY",
+    clearingHouse: "Inmar Dept. #18400, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
+  },
+  "Reynolds": {
+    dept: "12300", brand: "Reynolds Marketing Services Company",
+    products: "Camel / Newport / Natural American Spirit",
+    mailTo: "Reynolds Marketing Services Company",
+    clearingHouse: "Dept. #12300, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Ste 5, Laredo, TX 78045"
+  },
+  "Swisher": {
+    dept: "33300", brand: "Swisher International, Inc.",
+    products: "Swisher Sweets / Cigarillos",
+    mailTo: "Swisher International, Inc.",
+    clearingHouse: "Inmar Brand Solutions Dept. #33300, Mfr Rcv Office",
+    address: "801 Union Pacific Blvd., Ste 5, Laredo, TX 78045-9475"
+  }
+};
+
+const WHATSAPP = "14046689091";
+let rowCount = 0;
+
+window.onload = () => {
+  document.getElementById('inv-date').value = new Date().toISOString().split('T')[0];
+  addRow();
+};
+
+// ── STORE CHANGE ──
+function onStoreChange() {
+  const key = document.getElementById('sel-store').value;
+  const box = document.getElementById('store-preview');
+  if (!key || !STORES[key]) { box.classList.remove('show'); return; }
+  const s = STORES[key];
+  document.getElementById('sp-entity').textContent = s.entity;
+  document.getElementById('sp-addr').innerHTML = `<strong>${s.name}</strong><br>${s.street}<br>${s.city}`;
+  document.getElementById('sp-email').textContent = s.email;
+  box.classList.add('show');
+  // auto-generate invoice number suggestion
+  if (!document.getElementById('inv-num').value) {
+    const yr = new Date().getFullYear();
+    const mo = String(new Date().getMonth()+1).padStart(2,'0');
+    document.getElementById('inv-num').value = `${key.toUpperCase().slice(0,6)}-${yr}${mo}-001`;
+  }
+}
+
+// ── DEPT CHANGE ──
+function onDeptChange() {
+  const co  = document.getElementById('sel-dept').value;
+  const box = document.getElementById('dept-info');
+  if (!co) { box.classList.remove('show'); return; }
+  const d = COMPANIES[co];
+  document.getElementById('dept-num').textContent = d.dept;
+  document.getElementById('dept-address-block').innerHTML =
+    `<strong>${d.brand}</strong><br>
+     <span style="color:#8090b0;font-size:.73rem;">${d.products}</span><br>
+     <em>Mail to:</em> ${d.mailTo}<br>
+     ${d.clearingHouse}<br>
+     ${d.address}`;
+  box.classList.add('show');
+}
+
+// ── ROWS ──
+function addRow() {
+  rowCount++;
+  const id = rowCount;
+  const div = document.createElement('div');
+  div.className = 'coupon-row'; div.id = `row-${id}`;
+  div.innerHTML = `
+    <div>
+      <span class="field-label"># of Coupons</span>
+      <input type="number" min="0" step="1" placeholder="0" oninput="calc()" id="qty-${id}">
+    </div>
+    <div>
+      <span class="field-label">Face Value Each ($)</span>
+      <input type="number" min="0" step="0.01" placeholder="0.00" oninput="calc()" id="fv-${id}">
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;">
+      <div class="row-total" id="rt-${id}">$0.00</div>
+      ${id > 1 ? `<button class="remove-btn" onclick="removeRow(${id})" title="Remove row">✕</button>` : ''}
+    </div>`;
+  document.getElementById('coupon-rows').appendChild(div);
+}
+function removeRow(id) { document.getElementById(`row-${id}`).remove(); calc(); }
+
+// ── CALC ──
+function calc() {
+  let tQty = 0, tFace = 0;
+  document.querySelectorAll('.coupon-row').forEach(row => {
+    const rid = row.id.replace('row-','');
+    const qty = parseFloat(document.getElementById(`qty-${rid}`)?.value)||0;
+    const fv  = parseFloat(document.getElementById(`fv-${rid}`)?.value)||0;
+    const sub = qty * fv;
+    document.getElementById(`rt-${rid}`).textContent = '$'+sub.toFixed(2);
+    tQty += qty; tFace += sub;
+  });
+  const handling = tQty * 0.08;
+  const postage  = parseFloat(document.getElementById('postage').value)||0;
+  const grand    = tFace + handling + postage;
+  document.getElementById('tot-coupons').textContent  = tQty;
+  document.getElementById('tot-face').textContent     = '$'+tFace.toFixed(2);
+  document.getElementById('tot-handling').textContent = '$'+handling.toFixed(2);
+  document.getElementById('tot-grand').textContent    = '$'+grand.toFixed(2);
+}
+
+// ── GATHER ──
+function gatherData() {
+  const storeKey = document.getElementById('sel-store').value;
+  const co       = document.getElementById('sel-dept').value;
+  const invDate  = document.getElementById('inv-date').value;
+  const invNum   = document.getElementById('inv-num').value;
+  if (!storeKey) { alert('Please select a store.'); return null; }
+  if (!co)       { alert('Please select a tobacco company.'); return null; }
+  const store = STORES[storeKey];
+  const dept  = COMPANIES[co];
+  let rows = [];
+  document.querySelectorAll('.coupon-row').forEach(row => {
+    const rid = row.id.replace('row-','');
+    const qty = parseFloat(document.getElementById(`qty-${rid}`)?.value)||0;
+    const fv  = parseFloat(document.getElementById(`fv-${rid}`)?.value)||0;
+    if (qty > 0 && fv > 0) rows.push({ qty, fv, sub: qty*fv });
+  });
+  if (!rows.length) { alert('Please enter at least one coupon row with quantity and face value.'); return null; }
+  const tQty  = rows.reduce((s,r)=>s+r.qty, 0);
+  const tFace = rows.reduce((s,r)=>s+r.sub, 0);
+  const handling = tQty * 0.08;
+  const postage  = parseFloat(document.getElementById('postage').value)||0;
+  const grand    = tFace + handling + postage;
+  const fmtDate  = invDate
+    ? new Date(invDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+    : '—';
+  return { store, co, dept, invDate, fmtDate, invNum, rows, tQty, tFace, handling, postage, grand };
+}
+
+// ── BUILD INVOICE ──
+function buildInvoiceHTML(d) {
+  const tableRows = d.rows.map(r => `
+    <tr>
+      <td class="right">${r.qty}</td>
+      <td class="right">$${r.fv.toFixed(2)}</td>
+      <td class="right">$${r.sub.toFixed(2)}</td>
+    </tr>`).join('');
+
+  const deptStrip = Object.entries(COMPANIES).map(([k,v]) => {
+    const cls = k === d.co ? ' active' : '';
+    return `<div class="inv-dept-chip${cls}">${k}<br>#${v.dept}</div>`;
+  }).join('');
+
+  return `
+<div class="inv-header">
+  <h2>Coupon Redemption Invoice</h2>
+  <p>Tobacco Manufacturer Coupon Reimbursement &nbsp;·&nbsp; <strong>Submit separately per Operating Company</strong></p>
+</div>
+
+<div class="inv-grid2" style="margin-bottom:10px;">
+  <div class="inv-box"><div class="lbl">Invoice Date</div><div class="val">${d.fmtDate}</div></div>
+  <div class="inv-box"><div class="lbl">Invoice #</div><div class="val">${d.invNum||'—'}</div></div>
+</div>
+
+<div class="inv-grid2" style="margin-bottom:12px;">
+  <div class="inv-box">
+    <div class="lbl">Retailer / Store</div>
+    <div class="val" style="font-size:9pt;">${d.store.entity}<br>${d.store.name}<br>${d.store.street}<br>${d.store.city}</div>
+  </div>
+  <div class="inv-box">
+    <div class="lbl">Company / Department</div>
+    <div class="val" style="font-size:9pt;">${d.dept.brand}<br>Dept #${d.dept.dept}<br><span style="font-size:7.5pt;color:#555;font-weight:400;">${d.dept.products}</span></div>
+  </div>
+</div>
+
+<div class="inv-mail-section">
+  <div>
+    <div class="lbl">📬 Mail Coupons &amp; Invoice To:</div>
+    <div class="addr">
+      <strong>${d.dept.mailTo}</strong><br>
+      ${d.dept.clearingHouse}<br>
+      ${d.dept.address}
+    </div>
+  </div>
+  <div>
+    <div class="lbl">Store Email / Contact</div>
+    <div class="addr">${d.store.email}<br><span style="font-size:8pt;color:#777;">mtgstoreops@gmail.com</span></div>
+  </div>
+</div>
+
+<table class="inv-table">
+  <thead>
+    <tr>
+      <th class="right">Number of Coupons</th>
+      <th class="right">Face Value Each ($)</th>
+      <th class="right">Total Amount ($)</th>
+    </tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+
+<div class="inv-totals-wrap">
+  <div class="inv-totals">
+    <div class="inv-tot-row"><span>Total Coupons</span><span>${d.tQty}</span></div>
+    <div class="inv-tot-row"><span>Total Face Value</span><span>$${d.tFace.toFixed(2)}</span></div>
+    <div class="inv-tot-row"><span>Handling ($0.08 × ${d.tQty})</span><span>$${d.handling.toFixed(2)}</span></div>
+    <div class="inv-tot-row"><span>Postage Amount</span><span>$${d.postage.toFixed(2)}</span></div>
+    <div class="inv-tot-row"><span>TOTAL CLAIMED AMOUNT</span><span>$${d.grand.toFixed(2)}</span></div>
+  </div>
+</div>
+
+<div class="inv-dept-strip">${deptStrip}</div>
+
+<div class="inv-sig">
+  <div><div class="inv-sig-line" style="height:28px;"></div><div class="inv-sig-lbl">Authorized Retailer Signature</div></div>
+  <div><div class="inv-sig-line" style="height:28px;"></div><div class="inv-sig-lbl">Date Signed</div></div>
+</div>
+
+<div class="inv-footer">
+  ${d.store.entity} &nbsp;·&nbsp; ${d.store.name} &nbsp;·&nbsp; ${d.store.city} &nbsp;·&nbsp; Generated: ${new Date().toLocaleString()}
+</div>`;
+}
+
+// ── PREVIEW ──
+function previewInvoice() {
+  const d = gatherData(); if (!d) return;
+  document.getElementById('invoice-doc').innerHTML = buildInvoiceHTML(d);
+  document.getElementById('preview-modal').classList.add('open');
+}
+function closePreview() { document.getElementById('preview-modal').classList.remove('open'); }
+
+// ── PRINT ──
+function printInvoice() {
+  const d = gatherData(); if (!d) return;
+  document.getElementById('invoice-doc').innerHTML = buildInvoiceHTML(d);
+  document.getElementById('preview-modal').classList.remove('open');
+  setTimeout(() => window.print(), 200);
+}
+
+// ── WHATSAPP ──
+function sendWhatsapp() {
+  const d = gatherData(); if (!d) return;
+  let rows = d.rows.map(r=>`  • ${r.qty} coupons × $${r.fv.toFixed(2)} = $${r.sub.toFixed(2)}`).join('\n');
+  const msg =
+`📄 *COUPON REDEMPTION INVOICE*
+━━━━━━━━━━━━━━━━━━━━━━━
+🏪 *Store:* ${d.store.name}
+🏢 *Entity:* ${d.store.entity}
+📍 *Address:* ${d.store.street}, ${d.store.city}
+🏭 *Company:* ${d.dept.brand}
+📌 *Dept #:* ${d.dept.dept}
+📅 *Date:* ${d.fmtDate}
+🔢 *Invoice #:* ${d.invNum||'—'}
+━━━━━━━━━━━━━━━━━━━━━━━
+*Coupon Details:*
+${rows}
+━━━━━━━━━━━━━━━━━━━━━━━
+Total Coupons:  ${d.tQty}
+Face Value:     $${d.tFace.toFixed(2)}
+Handling:       $${d.handling.toFixed(2)}
+Postage:        $${d.postage.toFixed(2)}
+━━━━━━━━━━━━━━━━━━━━━━━
+💰 *TOTAL CLAIMED: $${d.grand.toFixed(2)}*
+━━━━━━━━━━━━━━━━━━━━━━━
+📬 *Mail to:*
+${d.dept.mailTo}
+${d.dept.clearingHouse}
+${d.dept.address}`;
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ── EMAIL ──
+function openEmailModal() {
+  const d = gatherData(); if (!d) return;
+  document.getElementById('email-modal').classList.add('open');
+  document.getElementById('email-cc').value  = d.store.email;
+  document.getElementById('email-note').value = `Coupon Redemption — ${d.store.name} — ${d.dept.brand} — Invoice #${d.invNum||'TBD'}`;
+}
+function closeEmailModal() { document.getElementById('email-modal').classList.remove('open'); }
+function doEmail() {
+  const d = gatherData(); if (!d) return;
+  const to   = document.getElementById('email-to').value;
+  const cc   = document.getElementById('email-cc').value;
+  const note = document.getElementById('email-note').value;
+  let rows = d.rows.map(r=>`  - ${r.qty} coupons x $${r.fv.toFixed(2)} = $${r.sub.toFixed(2)}`).join('\n');
+  const body =
+`COUPON REDEMPTION INVOICE
+=======================================
+Store:      ${d.store.name}
+Entity:     ${d.store.entity}
+Address:    ${d.store.street}, ${d.store.city}
+Company:    ${d.dept.brand}
+Dept #:     ${d.dept.dept}
+Date:       ${d.fmtDate}
+Invoice #:  ${d.invNum||'—'}
+=======================================
+COUPON DETAIL:
+${rows}
+---------------------------------------
+Total Coupons:    ${d.tQty}
+Total Face Value: $${d.tFace.toFixed(2)}
+Handling Fee:     $${d.handling.toFixed(2)}
+Postage:          $${d.postage.toFixed(2)}
+---------------------------------------
+TOTAL CLAIMED:    $${d.grand.toFixed(2)}
+=======================================
+MAIL COUPONS & INVOICE TO:
+  ${d.dept.mailTo}
+  ${d.dept.clearingHouse}
+  ${d.dept.address}
+
+Note: ${note}`;
+  const sub = `Coupon Redemption Invoice – ${d.store.name} – ${d.dept.brand} – $${d.grand.toFixed(2)}`;
+  const ccParam = cc ? `&cc=${encodeURIComponent(cc)}` : '';
+  window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(sub)}${ccParam}&body=${encodeURIComponent(body)}`;
+  closeEmailModal();
+}
+</script>
+</body>
+</html>
