@@ -60,7 +60,6 @@
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media(max-width:500px){ .row2 { grid-template-columns: 1fr; } }
 
-  /* Store info preview */
   .store-preview {
     margin-top: 12px; background: #eef2fa; border-radius: 10px;
     padding: 12px 16px; display: none; border-left: 4px solid var(--gold);
@@ -70,7 +69,6 @@
   .store-preview .addr  { font-size: .76rem; color: var(--slate); line-height: 1.6; }
   .store-preview .email { font-size: .73rem; color: var(--muted); margin-top: 3px; }
 
-  /* Dept info */
   .dept-info {
     margin-top: 12px; background: #eef2fa; border-radius: 10px;
     padding: 12px 16px; display: none; gap: 10px; flex-wrap: wrap; border-left: 4px solid var(--slate);
@@ -84,7 +82,6 @@
   .dept-badge span { color: var(--gold-light); }
   .dept-address { font-size: .76rem; color: var(--slate); line-height: 1.65; }
 
-  /* Coupon rows */
   .coupon-rows { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
   .coupon-row {
     display: grid; grid-template-columns: 1fr 1fr auto;
@@ -106,7 +103,6 @@
   }
   .add-row-btn:hover { border-color: var(--gold); color: var(--gold); background: #fffbf0; }
 
-  /* Totals */
   .totals-box { background: #f0f4fb; border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
   .totals-row {
     display: flex; justify-content: space-between; align-items: center;
@@ -117,7 +113,6 @@
   .totals-row.grand { font-size: 1.08rem; font-weight: 800; color: var(--navy); margin-top: 4px; padding-top: 8px; }
   .totals-row.grand .gval { color: var(--green); font-size: 1.15rem; }
 
-  /* Actions */
   .actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
     flex: 1; min-width: 130px; padding: 13px 14px; border: none; border-radius: 10px;
@@ -132,7 +127,6 @@
   .btn-whatsapp { background: #25d366; color: white; }
   .btn-email    { background: var(--gold);  color: var(--navy); }
 
-  /* Preview modal */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,.58); z-index: 100;
@@ -154,15 +148,11 @@
   }
   .modal-close:hover { background: rgba(255,255,255,.28); }
 
-  /* ── PRINTABLE INVOICE ── */
   #invoice-doc { padding: 28px 32px; font-family: Arial, sans-serif; font-size: 10.5pt; color: #000; }
-  .inv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .inv-brand { font-size: 8pt; color: #555; text-align: right; line-height: 1.5; }
   .inv-header { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 14px; }
   .inv-header h2 { font-size: 13.5pt; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
   .inv-header p  { font-size: 8pt; color: #444; margin-top: 3px; line-height: 1.5; }
   .inv-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-  .inv-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
   .inv-box { border: 1px solid #999; padding: 7px 10px; border-radius: 3px; }
   .inv-box .lbl { font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 2px; letter-spacing: .05em; }
   .inv-box .val { font-size: 9.5pt; font-weight: 700; line-height: 1.35; }
@@ -174,7 +164,6 @@
   .inv-table th.right, .inv-table td.right { text-align: right; }
   .inv-table td { padding: 5px 10px; border-bottom: 1px solid #ddd; }
   .inv-table tbody tr:last-child td { border-bottom: 2px solid #999; }
-  .inv-table tfoot td { padding: 5px 10px; font-weight: 700; background: #f0f0f0; }
   .inv-totals-wrap { display: flex; justify-content: flex-end; margin-bottom: 12px; }
   .inv-totals { width: 280px; border: 1.5px solid #999; border-radius: 3px; overflow: hidden; }
   .inv-tot-row { display: flex; justify-content: space-between; padding: 5px 12px; font-size: 9pt; border-bottom: 1px solid #ddd; }
@@ -191,7 +180,6 @@
   .inv-sig-lbl { font-size: 6.5pt; color: #666; margin-top: 3px; text-transform: uppercase; letter-spacing: .05em; }
   .inv-footer { font-size: 6.5pt; color: #888; text-align: center; border-top: 1px solid #ddd; padding-top: 6px; }
 
-  /* Email modal */
   .email-modal {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,.55); z-index: 200;
@@ -230,33 +218,19 @@
     <label for="sel-store">Store Location</label>
     <select id="sel-store" onchange="onStoreChange()">
       <option value="">— Choose a store —</option>
-      <optgroup label="NAAV INC">
-        <option value="naav_wellford">Kum "N" Go – Wellford</option>
-      </optgroup>
-      <optgroup label="Mehta Management LLC">
-        <option value="mehta_pats2">Pats #2 – Inman</option>
-        <option value="mehta_kc6">KC Mart #6 – Greer</option>
-        <option value="mehta_kc9">KC Mart #9 – Greer</option>
-      </optgroup>
-      <optgroup label="VDANK LLC">
-        <option value="vdank_kc4">KC Mart #4 – Central</option>
-      </optgroup>
-      <optgroup label="Mehta Investment and Consultancy LLC">
-        <option value="mic_hickory">Hickory Point – Blacksburg</option>
-      </optgroup>
-      <optgroup label="3VD LLC">
-        <option value="3vd_saluda">Saluda Quick Stop – Williamston</option>
-      </optgroup>
-      <optgroup label="Mehta Properties LLC">
-        <option value="mp_qs641">Quick Stop – Greenville</option>
-      </optgroup>
-      <optgroup label="TMG Investment 1 LLC">
-        <option value="tmg_mtg1">Marts To Go 1 – Dillon</option>
-        <option value="tmg_mtg2">Marts To Go 2 – Moncks Corner</option>
-        <option value="tmg_mtg3">Marts To Go 3 – Greenville</option>
-        <option value="tmg_mtg4">Marts To Go 4 – Charlotte</option>
-        <option value="tmg_mtg5">Marts To Go 5 – Rock Hill</option>
-      </optgroup>
+      <option value="naav_wellford">Kum "N" Go – Wellford, SC</option>
+      <option value="mehta_pats2">Pats #2 – Inman, SC</option>
+      <option value="mehta_kc6">KC Mart #6 – Greer, SC</option>
+      <option value="mehta_kc9">KC Mart #9 – Greer, SC</option>
+      <option value="vdank_kc4">KC Mart #4 – Central, SC</option>
+      <option value="mic_hickory">Hickory Point – Blacksburg, SC</option>
+      <option value="3vd_saluda">Saluda Quick Stop – Williamston, SC</option>
+      <option value="mp_qs641">Quick Stop – Greenville, SC</option>
+      <option value="tmg_mtg1">Marts To Go 1 – Dillon, SC</option>
+      <option value="tmg_mtg2">Marts To Go 2 – Moncks Corner, SC</option>
+      <option value="tmg_mtg3">Marts To Go 3 – Greenville, SC</option>
+      <option value="tmg_mtg4">Marts To Go 4 – Charlotte, NC</option>
+      <option value="tmg_mtg5">Marts To Go 5 – Rock Hill, SC</option>
     </select>
 
     <div class="store-preview" id="store-preview">
@@ -334,7 +308,7 @@
     </div>
   </div>
 
-</div><!-- /form-wrap -->
+</div>
 
 <!-- PREVIEW MODAL -->
 <div class="modal-overlay" id="preview-modal">
@@ -368,152 +342,30 @@
 </div>
 
 <script>
-// ── STORE DATA ──
 const STORES = {
-  naav_wellford: {
-    entity:   "NAAV INC",
-    name:     "Kum \"N\" Go (Wellford)",
-    street:   "859 Neighborhood Rd",
-    city:     "Wellford, SC 29385",
-    email:    "naav1inc@gmail.com"
-  },
-  mehta_pats2: {
-    entity:   "Mehta Management LLC",
-    name:     "Pats #2 (Inman)",
-    street:   "12110 Asheville Hwy",
-    city:     "Inman, SC 29349",
-    email:    "patsstore02@gmail.com"
-  },
-  mehta_kc6: {
-    entity:   "Mehta Management LLC",
-    name:     "KC Mart #6 (Greer)",
-    street:   "2851 N Hwy 101",
-    city:     "Greer, SC 29651",
-    email:    "kcmart06@gmail.com"
-  },
-  mehta_kc9: {
-    entity:   "Mehta Management LLC",
-    name:     "KC Mart #9 (Greer)",
-    street:   "701 S Buncombe Rd",
-    city:     "Greer, SC 29650",
-    email:    "kcmart09@gmail.com"
-  },
-  vdank_kc4: {
-    entity:   "VDANK LLC",
-    name:     "KC Mart #4 (Central)",
-    street:   "302 Suite-A E. Main Street",
-    city:     "Central, SC 29630",
-    email:    "vdankllc@gmail.com"
-  },
-  mic_hickory: {
-    entity:   "Mehta Investment and Consultancy LLC",
-    name:     "Hickory Point (Blacksburg)",
-    street:   "2806 E Cherokee Street",
-    city:     "Blacksburg, SC 29702",
-    email:    "point.hickory@gmail.com"
-  },
-  "3vd_saluda": {
-    entity:   "3VD LLC",
-    name:     "Saluda Quick Stop (Williamston)",
-    street:   "1525 Anderson Dr",
-    city:     "Williamston, SC 29697",
-    email:    "3vdllc@gmail.com"
-  },
-  mp_qs641: {
-    entity:   "Mehta Properties LLC",
-    name:     "Quick Stop (Greenville)",
-    street:   "641 N Main Street",
-    city:     "Greenville, SC 29601",
-    email:    "quickstop641@gmail.com"
-  },
-  tmg_mtg1: {
-    entity:   "TMG Investment 1 LLC",
-    name:     "Marts To Go 1 (Dillon)",
-    street:   "826 Radford Blvd",
-    city:     "Dillon, SC 29536",
-    email:    "tmginvest1@gmail.com"
-  },
-  tmg_mtg2: {
-    entity:   "TMG Investment 1 LLC",
-    name:     "Marts To Go 2 (Moncks Corner)",
-    street:   "101 S Live Oak Dr",
-    city:     "Moncks Corner, SC 29461",
-    email:    "tmginvest1@gmail.com"
-  },
-  tmg_mtg3: {
-    entity:   "TMG Investment 1 LLC",
-    name:     "Marts To Go 3 (Greenville)",
-    street:   "1703 Easley Bridge Rd",
-    city:     "Greenville, SC 29611",
-    email:    "martstogo3@gmail.com"
-  },
-  tmg_mtg4: {
-    entity:   "TMG Investment 1 LLC",
-    name:     "Marts To Go 4 (Charlotte)",
-    street:   "5343 Monroe Rd",
-    city:     "Charlotte, NC 28205",
-    email:    "martstogo4@gmail.com"
-  },
-  tmg_mtg5: {
-    entity:   "TMG Investment 1 LLC",
-    name:     "Marts To Go 5 (Rock Hill)",
-    street:   "1312 Springsteen Rd",
-    city:     "Rock Hill, SC 29730",
-    email:    "martstogo05@gmail.com"
-  }
+  naav_wellford: { entity:"NAAV INC", name:'Kum "N" Go (Wellford)', street:"859 Neighborhood Rd", city:"Wellford, SC 29385", email:"naav1inc@gmail.com" },
+  mehta_pats2:  { entity:"Mehta Management LLC", name:"Pats #2 (Inman)", street:"12110 Asheville Hwy", city:"Inman, SC 29349", email:"patsstore02@gmail.com" },
+  mehta_kc6:    { entity:"Mehta Management LLC", name:"KC Mart #6 (Greer)", street:"2851 N Hwy 101", city:"Greer, SC 29651", email:"kcmart06@gmail.com" },
+  mehta_kc9:    { entity:"Mehta Management LLC", name:"KC Mart #9 (Greer)", street:"701 S Buncombe Rd", city:"Greer, SC 29650", email:"kcmart09@gmail.com" },
+  vdank_kc4:    { entity:"VDANK LLC", name:"KC Mart #4 (Central)", street:"302 Suite-A E. Main Street", city:"Central, SC 29630", email:"vdankllc@gmail.com" },
+  mic_hickory:  { entity:"Mehta Investment and Consultancy LLC", name:"Hickory Point (Blacksburg)", street:"2806 E Cherokee Street", city:"Blacksburg, SC 29702", email:"point.hickory@gmail.com" },
+  "3vd_saluda": { entity:"3VD LLC", name:"Saluda Quick Stop (Williamston)", street:"1525 Anderson Dr", city:"Williamston, SC 29697", email:"3vdllc@gmail.com" },
+  mp_qs641:     { entity:"Mehta Properties LLC", name:"Quick Stop (Greenville)", street:"641 N Main Street", city:"Greenville, SC 29601", email:"quickstop641@gmail.com" },
+  tmg_mtg1:     { entity:"TMG Investment 1 LLC", name:"Marts To Go 1 (Dillon)", street:"826 Radford Blvd", city:"Dillon, SC 29536", email:"tmginvest1@gmail.com" },
+  tmg_mtg2:     { entity:"TMG Investment 1 LLC", name:"Marts To Go 2 (Moncks Corner)", street:"101 S Live Oak Dr", city:"Moncks Corner, SC 29461", email:"tmginvest1@gmail.com" },
+  tmg_mtg3:     { entity:"TMG Investment 1 LLC", name:"Marts To Go 3 (Greenville)", street:"1703 Easley Bridge Rd", city:"Greenville, SC 29611", email:"martstogo3@gmail.com" },
+  tmg_mtg4:     { entity:"TMG Investment 1 LLC", name:"Marts To Go 4 (Charlotte)", street:"5343 Monroe Rd", city:"Charlotte, NC 28205", email:"martstogo4@gmail.com" },
+  tmg_mtg5:     { entity:"TMG Investment 1 LLC", name:"Marts To Go 5 (Rock Hill)", street:"1312 Springsteen Rd", city:"Rock Hill, SC 29730", email:"martstogo05@gmail.com" }
 };
 
-// ── COMPANY DATA ──
 const COMPANIES = {
-  "PM USA": {
-    dept: "28200", brand: "PM USA (Philip Morris USA)",
-    products: "Marlboro & Philip Morris Brands",
-    mailTo: "Philip Morris USA",
-    clearingHouse: "Inmar Dept. #28200, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
-  },
-  "USSTC": {
-    dept: "73100", brand: "USSTC (U.S. Smokeless Tobacco Co.)",
-    products: "Skoal / Copenhagen / Grizzly",
-    mailTo: "USSTC",
-    clearingHouse: "Inmar Dept. #73100, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
-  },
-  "Helix": {
-    dept: "55022", brand: "Helix Innovations LLC",
-    products: "on! Nicotine Pouches",
-    mailTo: "Helix Innovations LLC",
-    clearingHouse: "Inmar Dept. #55022, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
-  },
-  "JMC": {
-    dept: "70137", brand: "JMC (John Middleton Co.)",
-    products: "Black & Mild / Pipe Tobacco",
-    mailTo: "John Middleton Co.",
-    clearingHouse: "Inmar Dept. #70137, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
-  },
-  "NJOY": {
-    dept: "18400", brand: "NJOY",
-    products: "E-Vapor / Electronic Cigarettes",
-    mailTo: "NJOY",
-    clearingHouse: "Inmar Dept. #18400, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475"
-  },
-  "Reynolds": {
-    dept: "12300", brand: "Reynolds Marketing Services Company",
-    products: "Camel / Newport / Natural American Spirit",
-    mailTo: "Reynolds Marketing Services Company",
-    clearingHouse: "Dept. #12300, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Ste 5, Laredo, TX 78045"
-  },
-  "Swisher": {
-    dept: "33300", brand: "Swisher International, Inc.",
-    products: "Swisher Sweets / Cigarillos",
-    mailTo: "Swisher International, Inc.",
-    clearingHouse: "Inmar Brand Solutions Dept. #33300, Mfr Rcv Office",
-    address: "801 Union Pacific Blvd., Ste 5, Laredo, TX 78045-9475"
-  }
+  "PM USA":   { dept:"28200", brand:"PM USA (Philip Morris USA)", products:"Marlboro & Philip Morris Brands", mailTo:"Philip Morris USA", clearingHouse:"Inmar Dept. #28200, Mfr Rcv Office", address:"801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475" },
+  "USSTC":    { dept:"73100", brand:"USSTC (U.S. Smokeless Tobacco Co.)", products:"Skoal / Copenhagen / Grizzly", mailTo:"USSTC", clearingHouse:"Inmar Dept. #73100, Mfr Rcv Office", address:"801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475" },
+  "Helix":    { dept:"55022", brand:"Helix Innovations LLC", products:"on! Nicotine Pouches", mailTo:"Helix Innovations LLC", clearingHouse:"Inmar Dept. #55022, Mfr Rcv Office", address:"801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475" },
+  "JMC":      { dept:"70137", brand:"JMC (John Middleton Co.)", products:"Black & Mild / Pipe Tobacco", mailTo:"John Middleton Co.", clearingHouse:"Inmar Dept. #70137, Mfr Rcv Office", address:"801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475" },
+  "NJOY":     { dept:"18400", brand:"NJOY", products:"E-Vapor / Electronic Cigarettes", mailTo:"NJOY", clearingHouse:"Inmar Dept. #18400, Mfr Rcv Office", address:"801 Union Pacific Blvd., Suite 5, Laredo, TX 78045-9475" },
+  "Reynolds": { dept:"12300", brand:"Reynolds Marketing Services Company", products:"Camel / Newport / Natural American Spirit", mailTo:"Reynolds Marketing Services Company", clearingHouse:"Dept. #12300, Mfr Rcv Office", address:"801 Union Pacific Blvd., Ste 5, Laredo, TX 78045" },
+  "Swisher":  { dept:"33300", brand:"Swisher International, Inc.", products:"Swisher Sweets / Cigarillos", mailTo:"Swisher International, Inc.", clearingHouse:"Inmar Brand Solutions Dept. #33300, Mfr Rcv Office", address:"801 Union Pacific Blvd., Ste 5, Laredo, TX 78045-9475" }
 };
 
 const WHATSAPP = "14046689091";
@@ -524,7 +376,6 @@ window.onload = () => {
   addRow();
 };
 
-// ── STORE CHANGE ──
 function onStoreChange() {
   const key = document.getElementById('sel-store').value;
   const box = document.getElementById('store-preview');
@@ -534,7 +385,6 @@ function onStoreChange() {
   document.getElementById('sp-addr').innerHTML = `<strong>${s.name}</strong><br>${s.street}<br>${s.city}`;
   document.getElementById('sp-email').textContent = s.email;
   box.classList.add('show');
-  // auto-generate invoice number suggestion
   if (!document.getElementById('inv-num').value) {
     const yr = new Date().getFullYear();
     const mo = String(new Date().getMonth()+1).padStart(2,'0');
@@ -542,7 +392,6 @@ function onStoreChange() {
   }
 }
 
-// ── DEPT CHANGE ──
 function onDeptChange() {
   const co  = document.getElementById('sel-dept').value;
   const box = document.getElementById('dept-info');
@@ -558,7 +407,6 @@ function onDeptChange() {
   box.classList.add('show');
 }
 
-// ── ROWS ──
 function addRow() {
   rowCount++;
   const id = rowCount;
@@ -581,7 +429,6 @@ function addRow() {
 }
 function removeRow(id) { document.getElementById(`row-${id}`).remove(); calc(); }
 
-// ── CALC ──
 function calc() {
   let tQty = 0, tFace = 0;
   document.querySelectorAll('.coupon-row').forEach(row => {
@@ -601,7 +448,6 @@ function calc() {
   document.getElementById('tot-grand').textContent    = '$'+grand.toFixed(2);
 }
 
-// ── GATHER ──
 function gatherData() {
   const storeKey = document.getElementById('sel-store').value;
   const co       = document.getElementById('sel-dept').value;
@@ -630,7 +476,6 @@ function gatherData() {
   return { store, co, dept, invDate, fmtDate, invNum, rows, tQty, tFace, handling, postage, grand };
 }
 
-// ── BUILD INVOICE ──
 function buildInvoiceHTML(d) {
   const tableRows = d.rows.map(r => `
     <tr>
@@ -638,23 +483,19 @@ function buildInvoiceHTML(d) {
       <td class="right">$${r.fv.toFixed(2)}</td>
       <td class="right">$${r.sub.toFixed(2)}</td>
     </tr>`).join('');
-
   const deptStrip = Object.entries(COMPANIES).map(([k,v]) => {
     const cls = k === d.co ? ' active' : '';
     return `<div class="inv-dept-chip${cls}">${k}<br>#${v.dept}</div>`;
   }).join('');
-
   return `
 <div class="inv-header">
   <h2>Coupon Redemption Invoice</h2>
   <p>Tobacco Manufacturer Coupon Reimbursement &nbsp;·&nbsp; <strong>Submit separately per Operating Company</strong></p>
 </div>
-
 <div class="inv-grid2" style="margin-bottom:10px;">
   <div class="inv-box"><div class="lbl">Invoice Date</div><div class="val">${d.fmtDate}</div></div>
   <div class="inv-box"><div class="lbl">Invoice #</div><div class="val">${d.invNum||'—'}</div></div>
 </div>
-
 <div class="inv-grid2" style="margin-bottom:12px;">
   <div class="inv-box">
     <div class="lbl">Retailer / Store</div>
@@ -665,33 +506,24 @@ function buildInvoiceHTML(d) {
     <div class="val" style="font-size:9pt;">${d.dept.brand}<br>Dept #${d.dept.dept}<br><span style="font-size:7.5pt;color:#555;font-weight:400;">${d.dept.products}</span></div>
   </div>
 </div>
-
 <div class="inv-mail-section">
   <div>
     <div class="lbl">📬 Mail Coupons &amp; Invoice To:</div>
-    <div class="addr">
-      <strong>${d.dept.mailTo}</strong><br>
-      ${d.dept.clearingHouse}<br>
-      ${d.dept.address}
-    </div>
+    <div class="addr"><strong>${d.dept.mailTo}</strong><br>${d.dept.clearingHouse}<br>${d.dept.address}</div>
   </div>
   <div>
     <div class="lbl">Store Email / Contact</div>
     <div class="addr">${d.store.email}<br><span style="font-size:8pt;color:#777;">mtgstoreops@gmail.com</span></div>
   </div>
 </div>
-
 <table class="inv-table">
-  <thead>
-    <tr>
-      <th class="right">Number of Coupons</th>
-      <th class="right">Face Value Each ($)</th>
-      <th class="right">Total Amount ($)</th>
-    </tr>
-  </thead>
+  <thead><tr>
+    <th class="right">Number of Coupons</th>
+    <th class="right">Face Value Each ($)</th>
+    <th class="right">Total Amount ($)</th>
+  </tr></thead>
   <tbody>${tableRows}</tbody>
 </table>
-
 <div class="inv-totals-wrap">
   <div class="inv-totals">
     <div class="inv-tot-row"><span>Total Coupons</span><span>${d.tQty}</span></div>
@@ -701,20 +533,16 @@ function buildInvoiceHTML(d) {
     <div class="inv-tot-row"><span>TOTAL CLAIMED AMOUNT</span><span>$${d.grand.toFixed(2)}</span></div>
   </div>
 </div>
-
 <div class="inv-dept-strip">${deptStrip}</div>
-
 <div class="inv-sig">
   <div><div class="inv-sig-line" style="height:28px;"></div><div class="inv-sig-lbl">Authorized Retailer Signature</div></div>
   <div><div class="inv-sig-line" style="height:28px;"></div><div class="inv-sig-lbl">Date Signed</div></div>
 </div>
-
 <div class="inv-footer">
   ${d.store.entity} &nbsp;·&nbsp; ${d.store.name} &nbsp;·&nbsp; ${d.store.city} &nbsp;·&nbsp; Generated: ${new Date().toLocaleString()}
 </div>`;
 }
 
-// ── PREVIEW ──
 function previewInvoice() {
   const d = gatherData(); if (!d) return;
   document.getElementById('invoice-doc').innerHTML = buildInvoiceHTML(d);
@@ -722,7 +550,6 @@ function previewInvoice() {
 }
 function closePreview() { document.getElementById('preview-modal').classList.remove('open'); }
 
-// ── PRINT ──
 function printInvoice() {
   const d = gatherData(); if (!d) return;
   document.getElementById('invoice-doc').innerHTML = buildInvoiceHTML(d);
@@ -730,7 +557,6 @@ function printInvoice() {
   setTimeout(() => window.print(), 200);
 }
 
-// ── WHATSAPP ──
 function sendWhatsapp() {
   const d = gatherData(); if (!d) return;
   let rows = d.rows.map(r=>`  • ${r.qty} coupons × $${r.fv.toFixed(2)} = $${r.sub.toFixed(2)}`).join('\n');
@@ -762,11 +588,10 @@ ${d.dept.address}`;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-// ── EMAIL ──
 function openEmailModal() {
   const d = gatherData(); if (!d) return;
   document.getElementById('email-modal').classList.add('open');
-  document.getElementById('email-cc').value  = d.store.email;
+  document.getElementById('email-cc').value   = d.store.email;
   document.getElementById('email-note').value = `Coupon Redemption — ${d.store.name} — ${d.dept.brand} — Invoice #${d.invNum||'TBD'}`;
 }
 function closeEmailModal() { document.getElementById('email-modal').classList.remove('open'); }
