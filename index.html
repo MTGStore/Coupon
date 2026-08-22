@@ -727,7 +727,7 @@ function buildInvoiceHTML(d){
   </div>
   <div style="flex:1;margin-left:16px;">
     <h1>Coupon Redemption Invoice</h1>
-    <div class="inv-sub">Altria Tobacco Operating Companies &nbsp;·&nbsp; Must be submitted separately for each Operating Company</div>
+
   </div>
 </div>
 
@@ -790,10 +790,7 @@ function buildInvoiceHTML(d){
   </div>
 </div>
 
-<div class="inv-dept-strip">
-  <span class="inv-dept-lbl">Operating Company:</span>
-  ${deptStrip}
-</div>
+
 
 <div class="inv-sig-row">
   <div class="inv-sig-box"><div style="height:32px;"></div><div class="inv-sig-lbl">Authorized Signature</div></div>
@@ -801,9 +798,7 @@ function buildInvoiceHTML(d){
   <div class="inv-sig-box"><div style="height:32px;"></div><div class="inv-sig-lbl">Date Signed</div></div>
 </div>
 
-<div class="inv-footer-bar">
-  ${d.store.entity} &nbsp;·&nbsp; ${d.store.name} &nbsp;·&nbsp; ${d.store.city} &nbsp;·&nbsp; ${d.dept.brand} – Dept #${d.dept.dept} &nbsp;·&nbsp; Generated: ${new Date().toLocaleString()}
-</div>`;
+`;
 }
 
 function previewInvoice(){
