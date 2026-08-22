@@ -58,7 +58,8 @@
   select:focus, input:focus { outline: none; border-color: var(--gold); background: #fff; box-shadow: 0 0 0 3px rgba(200,150,30,.12); }
 
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media(max-width:500px){ .row2 { grid-template-columns: 1fr; } }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media(max-width:500px){ .row2,.row3 { grid-template-columns: 1fr; } }
 
   .store-preview {
     margin-top: 12px; background: #eef2fa; border-radius: 10px;
@@ -81,6 +82,42 @@
   }
   .dept-badge span { color: var(--gold-light); }
   .dept-address { font-size: .76rem; color: var(--slate); line-height: 1.65; }
+
+  /* postage calculator */
+  .postage-calc {
+    background: #f7f9fd; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 16px; margin-top: 14px;
+  }
+  .postage-calc-title {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--slate); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .postage-result {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    background: #e8f4ec; border: 1.5px solid #b2d8bc;
+    display: none;
+  }
+  .postage-result.show { display: block; }
+  .postage-result .rate-label { font-size: .72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .postage-result .rate-type  { font-size: .85rem; color: var(--slate); margin: 2px 0 6px; }
+  .postage-result .rate-price { font-size: 1.4rem; font-weight: 900; color: var(--green); }
+  .postage-result .rate-note  { font-size: .72rem; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .use-postage-btn {
+    margin-top: 8px; width: 100%; padding: 9px;
+    background: var(--green); color: white; border: none;
+    border-radius: 7px; font-weight: 700; font-size: .85rem;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .use-postage-btn:hover { opacity: .85; }
+  .weight-unit-toggle {
+    display: flex; gap: 0; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px;
+  }
+  .weight-unit-toggle button {
+    flex: 1; padding: 8px; border: none; background: #f0f3f9;
+    font-size: .82rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .weight-unit-toggle button.active { background: var(--navy); color: white; }
 
   .coupon-rows { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
   .coupon-row {
@@ -281,14 +318,53 @@
     <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">One row per face value. Add more rows if you have multiple denominations.</p>
     <div class="coupon-rows" id="coupon-rows"></div>
     <button class="add-row-btn" onclick="addRow()">＋ Add Another Face Value Row</button>
+
+    <!-- POSTAGE CALCULATOR -->
+    <div class="postage-calc">
+      <div class="postage-calc-title">📮 USPS Postage Calculator <span style="font-size:.68rem;color:var(--muted);font-weight:400;">(destination: Laredo, TX)</span></div>
+
+      <div class="weight-unit-toggle">
+        <button id="btn-oz" class="active" onclick="setUnit('oz')">Ounces (oz)</button>
+        <button id="btn-lbs" onclick="setUnit('lbs')">Pounds (lbs)</button>
+        <button id="btn-g" onclick="setUnit('g')">Grams (g)</button>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label for="pkg-weight" style="margin-top:0;">Package Weight</label>
+          <input type="number" id="pkg-weight" min="0" step="0.1" placeholder="e.g. 3.5"
+                 oninput="calcPostage()" style="background:white;">
+        </div>
+        <div>
+          <label for="pkg-type" style="margin-top:0;">Mail Type</label>
+          <select id="pkg-type" onchange="calcPostage()">
+            <option value="letter">Letter / #10 Envelope</option>
+            <option value="flat" selected>Large Envelope (Flat)</option>
+            <option value="parcel">Package / Small Box</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="postage-result" id="postage-result">
+        <div class="rate-label">Estimated USPS Rate</div>
+        <div class="rate-type" id="pr-type">—</div>
+        <div class="rate-price" id="pr-price">$0.00</div>
+        <div class="rate-note" id="pr-note">—</div>
+        <button class="use-postage-btn" onclick="applyPostage()">✅ Use This Postage Amount</button>
+      </div>
+    </div>
+
     <div class="totals-box">
       <div class="totals-row"><span>Total Coupons</span><strong id="tot-coupons">0</strong></div>
       <div class="totals-row"><span>Total Face Value</span><strong id="tot-face">$0.00</strong></div>
       <div class="totals-row"><span>Handling Fee ($0.08 × coupons)</span><strong id="tot-handling">$0.00</strong></div>
       <div class="totals-row">
-        <span>Postage Amount <em style="color:var(--muted);font-weight:400;font-size:.8em;">(enter manually)</em></span>
-        <input type="number" id="postage" min="0" step="0.01" placeholder="0.00"
-               style="width:96px;padding:5px 8px;font-size:.85rem;text-align:right;" oninput="calc()">
+        <span>Postage Amount</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="postage-badge" style="font-size:.72rem;background:#e8f4ec;color:var(--green);padding:2px 8px;border-radius:5px;font-weight:700;display:none;">USPS</span>
+          <input type="number" id="postage" min="0" step="0.01" placeholder="0.00"
+                 style="width:96px;padding:5px 8px;font-size:.85rem;text-align:right;" oninput="calc()">
+        </div>
       </div>
       <div class="totals-row grand">
         <span>💰 Total Claimed Amount</span>
@@ -342,6 +418,7 @@
 </div>
 
 <script>
+// ── STORE DATA ──
 const STORES = {
   naav_wellford: { entity:"NAAV INC", name:'Kum "N" Go (Wellford)', street:"859 Neighborhood Rd", city:"Wellford, SC 29385", email:"naav1inc@gmail.com" },
   mehta_pats2:  { entity:"Mehta Management LLC", name:"Pats #2 (Inman)", street:"12110 Asheville Hwy", city:"Inman, SC 29349", email:"patsstore02@gmail.com" },
@@ -368,14 +445,104 @@ const COMPANIES = {
   "Swisher":  { dept:"33300", brand:"Swisher International, Inc.", products:"Swisher Sweets / Cigarillos", mailTo:"Swisher International, Inc.", clearingHouse:"Inmar Brand Solutions Dept. #33300, Mfr Rcv Office", address:"801 Union Pacific Blvd., Ste 5, Laredo, TX 78045-9475" }
 };
 
+// ── USPS 2026 RATES (First-Class / Priority, SC to TX) ──
+// Source: USPS 2026 rate schedule
+const USPS_RATES = {
+  letter: [
+    { maxOz: 1,    price: 0.73, label: "First-Class Letter (1 oz)",         note: "Standard #10 envelope, up to 1 oz" },
+    { maxOz: 2,    price: 0.94, label: "First-Class Letter (2 oz)",          note: "Add $0.21 per additional ounce" },
+    { maxOz: 3,    price: 1.15, label: "First-Class Letter (3 oz)",          note: "Add $0.21 per additional ounce" },
+    { maxOz: 3.5,  price: 1.29, label: "First-Class Letter (3.5 oz max)",    note: "Maximum for letter class — use Large Envelope above 3.5 oz" }
+  ],
+  flat: [
+    { maxOz: 1,    price: 1.50, label: "First-Class Large Envelope (1 oz)",  note: "Standard coupon flat — fits 20–50 coupons" },
+    { maxOz: 2,    price: 1.71, label: "First-Class Large Envelope (2 oz)",  note: "Fits ~50–100 coupons" },
+    { maxOz: 3,    price: 1.92, label: "First-Class Large Envelope (3 oz)",  note: "Fits ~100–150 coupons" },
+    { maxOz: 4,    price: 2.13, label: "First-Class Large Envelope (4 oz)",  note: "Fits ~150–200 coupons" },
+    { maxOz: 5,    price: 2.34, label: "First-Class Large Envelope (5 oz)",  note: "Fits ~200–250 coupons" },
+    { maxOz: 6,    price: 2.55, label: "First-Class Large Envelope (6 oz)",  note: "Fits ~250–300 coupons" },
+    { maxOz: 7,    price: 2.76, label: "First-Class Large Envelope (7 oz)",  note: "Fits ~300–350 coupons" },
+    { maxOz: 8,    price: 2.97, label: "First-Class Large Envelope (8 oz)",  note: "Fits ~350–400 coupons" },
+    { maxOz: 9,    price: 3.18, label: "First-Class Large Envelope (9 oz)",  note: "Fits ~400–450 coupons" },
+    { maxOz: 10,   price: 3.39, label: "First-Class Large Envelope (10 oz)", note: "Fits ~450–500 coupons" },
+    { maxOz: 11,   price: 3.60, label: "First-Class Large Envelope (11 oz)", note: "" },
+    { maxOz: 12,   price: 3.81, label: "First-Class Large Envelope (12 oz)", note: "" },
+    { maxOz: 13,   price: 4.02, label: "First-Class Large Envelope (13 oz)", note: "Max for First-Class Flat — use Priority above 13 oz" }
+  ],
+  parcel: [
+    { maxOz: 16,   price: 9.25,  label: "Priority Mail (1 lb)",              note: "SC → TX, 2–3 day delivery" },
+    { maxOz: 32,   price: 12.40, label: "Priority Mail (2 lbs)",             note: "SC → TX, 2–3 day delivery" },
+    { maxOz: 48,   price: 14.65, label: "Priority Mail (3 lbs)",             note: "SC → TX, 2–3 day delivery" },
+    { maxOz: 64,   price: 16.80, label: "Priority Mail (4 lbs)",             note: "SC → TX, 2–3 day delivery" },
+    { maxOz: 80,   price: 18.95, label: "Priority Mail (5 lbs)",             note: "SC → TX, 2–3 day delivery" },
+    { maxOz: 9999, price: 22.00, label: "Priority Mail (5+ lbs)",            note: "Contact USPS for exact rate — estimate only" }
+  ]
+};
+
 const WHATSAPP = "14046689091";
 let rowCount = 0;
+let currentUnit = 'oz';
 
 window.onload = () => {
   document.getElementById('inv-date').value = new Date().toISOString().split('T')[0];
   addRow();
 };
 
+// ── UNIT TOGGLE ──
+function setUnit(unit) {
+  currentUnit = unit;
+  ['oz','lbs','g'].forEach(u => document.getElementById('btn-'+u).classList.toggle('active', u === unit));
+  const labels = { oz:'Ounces (oz)', lbs:'Pounds (lbs)', g:'Grams (g)' };
+  document.getElementById('pkg-weight').placeholder = unit === 'oz' ? 'e.g. 3.5' : unit === 'lbs' ? 'e.g. 0.5' : 'e.g. 100';
+  calcPostage();
+}
+
+// ── CONVERT TO OZ ──
+function toOz(val, unit) {
+  if (unit === 'oz')  return val;
+  if (unit === 'lbs') return val * 16;
+  if (unit === 'g')   return val * 0.035274;
+  return val;
+}
+
+// ── POSTAGE CALC ──
+function calcPostage() {
+  const raw  = parseFloat(document.getElementById('pkg-weight').value);
+  const type = document.getElementById('pkg-type').value;
+  const res  = document.getElementById('postage-result');
+  if (!raw || raw <= 0) { res.classList.remove('show'); return; }
+
+  const oz     = toOz(raw, currentUnit);
+  const table  = USPS_RATES[type];
+  const match  = table.find(r => oz <= r.maxOz);
+
+  if (!match) { res.classList.remove('show'); return; }
+
+  // display weight back in oz always for clarity
+  const dispOz = oz.toFixed(2);
+
+  document.getElementById('pr-type').textContent  = match.label;
+  document.getElementById('pr-price').textContent = '$' + match.price.toFixed(2);
+  document.getElementById('pr-note').innerHTML    =
+    `${match.note ? match.note + '<br>' : ''}` +
+    `<strong>Weight entered:</strong> ${raw} ${currentUnit} = ${dispOz} oz &nbsp;·&nbsp; <strong>Destination:</strong> Laredo, TX 78045`;
+  res.classList.add('show');
+}
+
+function applyPostage() {
+  const raw  = parseFloat(document.getElementById('pkg-weight').value);
+  const type = document.getElementById('pkg-type').value;
+  if (!raw || raw <= 0) return;
+  const oz    = toOz(raw, currentUnit);
+  const table = USPS_RATES[type];
+  const match = table.find(r => oz <= r.maxOz);
+  if (!match) return;
+  document.getElementById('postage').value = match.price.toFixed(2);
+  document.getElementById('postage-badge').style.display = 'inline';
+  calc();
+}
+
+// ── STORE CHANGE ──
 function onStoreChange() {
   const key = document.getElementById('sel-store').value;
   const box = document.getElementById('store-preview');
@@ -392,6 +559,7 @@ function onStoreChange() {
   }
 }
 
+// ── DEPT CHANGE ──
 function onDeptChange() {
   const co  = document.getElementById('sel-dept').value;
   const box = document.getElementById('dept-info');
@@ -407,6 +575,7 @@ function onDeptChange() {
   box.classList.add('show');
 }
 
+// ── ROWS ──
 function addRow() {
   rowCount++;
   const id = rowCount;
@@ -429,6 +598,7 @@ function addRow() {
 }
 function removeRow(id) { document.getElementById(`row-${id}`).remove(); calc(); }
 
+// ── CALC ──
 function calc() {
   let tQty = 0, tFace = 0;
   document.querySelectorAll('.coupon-row').forEach(row => {
@@ -448,6 +618,7 @@ function calc() {
   document.getElementById('tot-grand').textContent    = '$'+grand.toFixed(2);
 }
 
+// ── GATHER ──
 function gatherData() {
   const storeKey = document.getElementById('sel-store').value;
   const co       = document.getElementById('sel-dept').value;
@@ -464,7 +635,7 @@ function gatherData() {
     const fv  = parseFloat(document.getElementById(`fv-${rid}`)?.value)||0;
     if (qty > 0 && fv > 0) rows.push({ qty, fv, sub: qty*fv });
   });
-  if (!rows.length) { alert('Please enter at least one coupon row with quantity and face value.'); return null; }
+  if (!rows.length) { alert('Please enter at least one coupon row.'); return null; }
   const tQty  = rows.reduce((s,r)=>s+r.qty, 0);
   const tFace = rows.reduce((s,r)=>s+r.sub, 0);
   const handling = tQty * 0.08;
@@ -476,6 +647,7 @@ function gatherData() {
   return { store, co, dept, invDate, fmtDate, invNum, rows, tQty, tFace, handling, postage, grand };
 }
 
+// ── BUILD INVOICE ──
 function buildInvoiceHTML(d) {
   const tableRows = d.rows.map(r => `
     <tr>
