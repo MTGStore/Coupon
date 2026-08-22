@@ -712,7 +712,10 @@ function buildInvoiceHTML(d){
       <td class="r" style="color:#ccc;">$</td>
     </tr>`).join('');
 
-  const deptStrip = Object.entries(COMPANIES).map(([k,v])=>{
+  // Strip shows only the 5 Altria companies + Reynolds (no Swisher — per operator preference)
+  const STRIP_KEYS = ["PM USA","USSTC","JMC","Helix","NJOY","Reynolds"];
+  const deptStrip = STRIP_KEYS.map(k=>{
+    const v = COMPANIES[k];
     const cls = k===d.co?' active':'';
     return `<div class="inv-dept-chip${cls}">${k}<br><span style="font-size:6.5pt;">#${v.dept}</span></div>`;
   }).join('');
@@ -726,14 +729,9 @@ function buildInvoiceHTML(d){
     <h1>Coupon Redemption Invoice</h1>
     <div class="inv-sub">Altria Tobacco Operating Companies &nbsp;·&nbsp; Must be submitted separately for each Operating Company</div>
   </div>
-  <div style="text-align:right;font-size:7.5pt;color:#b0bcd8;line-height:1.7;">
-    PM USA – Dept #28200<br>USSTC – Dept #73100<br>JMC – Dept #70137<br>Helix – Dept #55022<br>NJOY – Dept #18400
-  </div>
 </div>
 
-<div class="inv-notice">
-  ⚠️ This invoice must be submitted separately for each Operating Company — do not combine multiple companies on one submission.
-</div>
+
 
 <div class="inv-meta">
   <div class="inv-field">
